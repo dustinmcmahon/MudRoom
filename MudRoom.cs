@@ -2,24 +2,45 @@
 
 namespace MudRoom
 {
-    public class MudRoom {
+    public class MudRoom
+    {
+        private static int CREATURESEED = 1;
+        private static int ROOMSEED = 1;
 
         public static void Main(String[] args) {
             Console.WriteLine("Welcome to the MudRoom!");
+            
+            List<Room> roomList = CreateRooms();
+            FillRooms(roomList);
+            ExecutionLoop(roomList);
+
+            Console.WriteLine(roomList[0].ToString());
+        }
+
+        // Build The Dungeon!!
+        // rebuild this to work with a recursive helper funcion
+        // aim random generation of the rooms
+        private static List<Room> CreateRooms() {
             int roomCount;
             do
             {
                 Console.WriteLine("How many rooms would you like to make?(1-16)");
-                roomCount = Convert.ToInt32(Console.ReadLine());
-            } while (roomCount < 0 || roomCount > 16);
+                roomCount = Convert.ToInt32(Console.ReadLine()) + 0;
+            } while (roomCount <= 0 || roomCount > 16);
 
-            Room entrance = new Room();
-            Room curRoom = entrance;
+            List<Room> roomList =  new List<Room>();
+            Room entrance = new Room(ROOMSEED++);
+            roomList.Add(entrance);
 
-            for (int x = 1; x < roomCount; x++) {
-                Room newRoom = new Room();
+            for (int x = 1; x < roomCount; x++)
+            {
+
+                Room newRoom = new Room(ROOMSEED++);
                 bool added = entrance.AddRoomConnection(newRoom);
-                if (!added) {
+                roomList.Add(newRoom);
+
+                if (!added)
+                {
                     Room? location = entrance.GetNorthRoom();
                     if (location != null) added = location.AddRoomConnection(newRoom);
                     if (!added)
@@ -43,7 +64,83 @@ namespace MudRoom
                     }
                 }
             }
-            Console.WriteLine(entrance.ToString());
+
+            return roomList;
+        }
+
+        // Populate Dungeon with creatures
+        private static void FillRooms(List<Room> roomList)
+        {
+
+            // Creature Building Section
+            int creatureCount;
+            do
+            {
+                Console.WriteLine("How many creatures would you like to make?(at least 1)");
+                creatureCount = Convert.ToInt32(Console.ReadLine());
+            } while (creatureCount < 0);
+
+            Random r = new Random();
+            for (int x = 0; x < creatureCount; x++)
+            {
+                if (x == 0)
+                {
+                    roomList[0].AddCreatureToRoom(new Creature(CREATURESEED++, 0));
+                }
+                else
+                {
+                    roomList[r.Next(roomList.Count - 1)].AddCreatureToRoom(new Creature(CREATURESEED++, (r.Next(2)+1)));
+                }
+            }
+        }
+
+        // main execution loop
+        private static void ExecutionLoop(List<Room> roomList)
+        {
+            String? inLine;
+            PrintInstructions();
+            Console.WriteLine("Enter a command after the promt");
+            do
+            {
+                Console.Write(">> ");
+                inLine = Console.ReadLine();
+                if (String.IsNullOrEmpty(inLine)) {
+                    Console.WriteLine("Enter a command after the promt");
+                }
+                else if (inLine.Contains(":"))
+                {
+                    ExecuteCreatureCommand(inLine, roomList);
+                }
+                else {
+                    ExecutePlayerCommand(inLine, roomList);
+                }
+
+            } while (inLine != "exit");
+        }
+
+        private static void PrintInstructions() {
+            Console.WriteLine("Command Type: Player\n\thelp: print commands\n\tlook: print room condition\n\tclean: clean current room\n\tdirty: make the current room dirtier\n\tnorth,east,south,west: move in the given direction\n\texit: quit game");
+            Console.WriteLine("Command Type: Creature\n\tNOTE: all creature commands follow this pattern [creatureNumber]:[command]\n\tlook: diplay creatures room information\n\tclean: force creature to clean the room\n\tdirty: force creature to dirty the room\n\tnorth,east,south,west: force creature to move in the given direction");
+        }
+
+        private static void ExecuteCreatureCommand(String commandString, List<Room> roomList)
+        {
+            Console.WriteLine("Execute Creature Command");
+            String[] commands = commandString.Split(':');
+            foreach (String command in commands)
+            {
+                Console.WriteLine(command);
+            }
+        }
+
+        private static void ExecutePlayerCommand(String commandString, List<Room> roomList)
+        {
+            Console.WriteLine("Execute Player Command");
+
+        }
+
+        private static void PrintRoomInformation(int roomId, List<Room> roomList) { 
+            
         }
     }
 }

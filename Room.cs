@@ -2,7 +2,6 @@
 {
     internal class Room
     {
-        private static int ROOMSEED = 1;
         private int _roomId;
         private Room? North;
         private Room? East;
@@ -12,10 +11,9 @@
         // cleaness of the room 0 = dirty, 1 = half clean/dirty, 2 = clean
         private int state;
 
-        public Room()
+        public Room(int roomID)
         {
-            _roomId = ROOMSEED;
-            ROOMSEED++;
+            _roomId = roomID;
             this.North = null;
             this.East = null;
             this.South = null;
@@ -55,11 +53,11 @@
         public void AddCreatureToRoom(Creature creature) => CreatureList.Add(creature);
         //remove creature from the room
         public bool RemoveCreature(Creature creature) {
-            return true;
+            return CreatureList.Remove(creature);
         }
 
         public override String ToString() {
-            String res = $"Room #{_roomId} is {RoomState()}:\nRooms:\n";
+            String res = $"Room #{_roomId} is {RoomState()}:\nExits:\n";
             if (North != null) { res = $"{res}\tNorth\n"; }
             if (East != null) { res = $"{res}\tEast\n"; }
             if (South != null) { res = $"{res}\tSouth\n"; }
