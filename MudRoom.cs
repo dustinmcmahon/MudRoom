@@ -14,7 +14,7 @@ namespace MudRoom
             FillRooms(roomList);
             ExecutionLoop(roomList);
 
-            Console.WriteLine(roomList[0].ToString());
+            PrintRoomInformation(1, roomList);
         }
 
         // Build The Dungeon!!
@@ -123,24 +123,60 @@ namespace MudRoom
             Console.WriteLine("Command Type: Creature\n\tNOTE: all creature commands follow this pattern [creatureNumber]:[command]\n\tlook: diplay creatures room information\n\tclean: force creature to clean the room\n\tdirty: force creature to dirty the room\n\tnorth,east,south,west: force creature to move in the given direction");
         }
 
-        private static void ExecuteCreatureCommand(String commandString, List<Room> roomList)
+        /**
+         * Parse command string to get creature ID and command
+         **/
+        private static void ExecuteCreatureCommand(string commandString, List<Room> roomList)
         {
-            Console.WriteLine("Execute Creature Command");
             String[] commands = commandString.Split(':');
-            foreach (String command in commands)
-            {
-                Console.WriteLine(command);
+            int creatureID = Int32.Parse(commands[0]);
+            String command = commands[1];
+            ExecuteCommand(creatureID, command, roomList);
+        }
+
+        /**
+         * this is just a passthrough to the execute command function
+         */
+        private static void ExecutePlayerCommand(string commandString, List<Room> roomList) => ExecuteCommand(1, commandString, roomList);
+
+        /**
+         * Execute All Commands 
+         */
+        private static void ExecuteCommand(int charactedID, string command, List<Room> roomList)
+        {
+            Console.WriteLine($"Character #{charactedID} performs {command}");
+            switch (command) {
+                case "look":
+                    Console.WriteLine("Look Command");
+                    break;
+                case "clean":
+                    Console.WriteLine("Clean Command");
+                    break;
+                case "dirty":
+                    Console.WriteLine("Dirty Command");
+                    break;
+                case "north":
+                    Console.WriteLine("Move North Command");
+                    break;
+                case "east":
+                    Console.WriteLine("Move North Command");
+                    break;
+                case "south":
+                    Console.WriteLine("Move North Command");
+                    break;
+                case "west":
+                    Console.WriteLine("Move North Command");
+                    break;
             }
         }
 
-        private static void ExecutePlayerCommand(String commandString, List<Room> roomList)
-        {
-            Console.WriteLine("Execute Player Command");
-
-        }
-
-        private static void PrintRoomInformation(int roomId, List<Room> roomList) { 
-            
+        private static void PrintRoomInformation(int roomId, List<Room> roomList) {
+            foreach(Room r in roomList)
+            {
+                if (r.IsRoomNumber(roomId)) { 
+                    Console.WriteLine(r.ToString());
+                }
+            }
         }
     }
 }

@@ -82,5 +82,9 @@
                     return "clean";
             }
         }
+
+        public bool IsRoomNumber(int roomId) {
+            return (roomId == _roomId);
+        }
     }
 }
